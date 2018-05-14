@@ -83,12 +83,12 @@ button:before{
 <script src="{{ url_for('static',filename='lib/nebPay.js') }}"></script>
 <script src="{{ url_for('static',filename='lib/nebulas.js') }}"></script>
 <script>
-    var dappAddress = "n1hUvxLwRVuYY9EenUZGj9QVmyL3HgpysWu";
+    var dappAddress = "n1rJQ5eQ6wQAnDuncPTBucDbpt5pstRd3aT";
     function findName(){
         var nebulas = require("nebulas"),
             Account = nebulas.Account,
             neb = new nebulas.Neb();
-        neb.setRequest(new nebulas.HttpRequest("https://testnet.nebulas.io"));
+        neb.setRequest(new nebulas.HttpRequest("https://mainnet.nebulas.io"));
         
             var from = Account.NewAccount().getAddressString();
             var value = "0";
@@ -119,7 +119,7 @@ button:before{
             var end = JSON.parse(tmpp)
             document.getElementById("Nameresult").innerHTML = "";
             var obj = document.getElementById("Nameresult").innerHTML;
-            
+            console.log(end.length);
             for (var i = 0; i < end.length; i++) {
 
                 // <div id="result">
@@ -132,10 +132,10 @@ button:before{
                 obj += "<div id=\"result\">";
                 obj += "<div id=\"fileName\">" + "资源名称："  + end[i].name + "</div>";
                 obj += "<div id=\"fileDesc\">" + "资源简介：" + end[i].desc + "</div>";
-                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].desc + "\" id=\"copy-content\" /></div>";
+                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].magnet + "\" id=\"copy-content\" /></div>";
                 obj += "</div>"
             }
-            document.getElementById('Animaresult').innerHTML = obj;
+            document.getElementById('Nameresult').innerHTML = obj;
         }
     }
 </script>

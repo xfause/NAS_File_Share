@@ -53,7 +53,7 @@
                 <div name="movie" align="center" style="background-color:aliceblue; height:850px;">
                     <br>
                     <div class="layui-input-block" style="margin: 10px">
-                        <button class="layui-btn">
+                        <button class="layui-btn" onclick="findMovie()">
                             <i class="layui-icon">&#xe669;</i>寻找电影
                         </button>
                     </div>
@@ -65,7 +65,7 @@
                 <div name="play" align="center" style="background-color:aliceblue;height: 850px;">
                     <br>
                     <div class="layui-input-block" style="margin: 10px">
-                        <button class="layui-btn">
+                        <button class="layui-btn" onclick="findPlay()">
                             <i class="layui-icon">&#xe669;</i>寻找电视剧
                         </button>
                     </div>
@@ -80,12 +80,12 @@
 <script src="{{ url_for('static',filename='lib/nebPay.js') }}"></script>
 <script src="{{ url_for('static',filename='lib/nebulas.js') }}"></script>
 <script>
-    var dappAddress = "n1hUvxLwRVuYY9EenUZGj9QVmyL3HgpysWu";
+    var dappAddress = "n1rJQ5eQ6wQAnDuncPTBucDbpt5pstRd3aT";
     function findAnima(){
         var nebulas = require("nebulas"),
             Account = nebulas.Account,
             neb = new nebulas.Neb();
-        neb.setRequest(new nebulas.HttpRequest("https://testnet.nebulas.io"));
+        neb.setRequest(new nebulas.HttpRequest("https://mainnet.nebulas.io"));
         
             var from = Account.NewAccount().getAddressString();
             var value = "0";
@@ -129,7 +129,7 @@
                 obj += "<div id=\"result\">";
                 obj += "<div id=\"fileName\">" + "资源名称："  + end[i].name + "</div>";
                 obj += "<div id=\"fileDesc\">" + "资源简介：" + end[i].desc + "</div>";
-                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].desc + "\" id=\"copy-content\" /></div>";
+                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].magnet + "\" id=\"copy-content\" /></div>";
                 obj += "</div>"
             }
             document.getElementById('Animaresult').innerHTML = obj;
@@ -139,7 +139,7 @@
         var nebulas = require("nebulas"),
             Account = nebulas.Account,
             neb = new nebulas.Neb();
-        neb.setRequest(new nebulas.HttpRequest("https://testnet.nebulas.io"));
+        neb.setRequest(new nebulas.HttpRequest("https://mainnet.nebulas.io"));
         
             var from = Account.NewAccount().getAddressString();
             var value = "0";
@@ -175,7 +175,7 @@
                 obj += "<div id=\"result\">";
                 obj += "<div id=\"fileName\">" + "资源名称："  + end[i].name + "</div>";
                 obj += "<div id=\"fileDesc\">" + "资源简介：" + end[i].desc + "</div>";
-                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].desc + "\" id=\"copy-content\" /></div>";
+                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].magnet + "\" id=\"copy-content\" /></div>";
                 obj += "</div>"
             }
             document.getElementById('Movieresult').innerHTML = obj;
@@ -185,7 +185,7 @@
         var nebulas = require("nebulas"),
             Account = nebulas.Account,
             neb = new nebulas.Neb();
-        neb.setRequest(new nebulas.HttpRequest("https://testnet.nebulas.io"));
+        neb.setRequest(new nebulas.HttpRequest("https://mainnet.nebulas.io"));
         
             var from = Account.NewAccount().getAddressString();
             var value = "0";
@@ -221,7 +221,7 @@
                 obj += "<div id=\"result\">";
                 obj += "<div id=\"fileName\">" + "资源名称："  + end[i].name + "</div>";
                 obj += "<div id=\"fileDesc\">" + "资源简介：" + end[i].desc + "</div>";
-                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].desc + "\" id=\"copy-content\" /></div>";
+                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].magnet + "\" id=\"copy-content\" /></div>";
                 obj += "</div>"
             }
             document.getElementById('Playresult').innerHTML = obj;
