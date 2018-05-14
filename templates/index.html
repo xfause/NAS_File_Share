@@ -1,0 +1,234 @@
+{% extends "header.html" %} 
+{% block css %} 
+    img { width: 100%; } 
+    .info { 
+        z-index:1; 
+        top: 200px; 
+        position: absolute; 
+        width:100%; 
+        text-align: center 
+    }
+    #Animaresult{
+        width: 80%; 
+        text-align: left;
+    }
+    #Movieresult{
+        width: 80%; 
+        text-align: left;
+    }
+    #Playresult{
+        width: 80%; 
+        text-align: left;
+    }
+    #result{
+        padding:10px;
+        border:2px solid #009688;
+        background:aliceblue;
+    }
+{% endblock %} 
+{% block content%}
+<div style="height: 850px; margin: 20px">
+    <div class="layui-row layui-col-space10 ">
+            <div class="layui-col-md4"  >
+              <div name="anima" align="center" style="background-color:aliceblue;height: 850px;">
+                    <br>
+                    <div class="layui-input-block" style="margin: 10px">
+                        <button class="layui-btn" onclick="findAnima()">
+                            <i class="layui-icon">&#xe669;</i>寻找动漫
+                        </button>
+                    </div>
+                    <hr style="background-color: black;width: 90%;">
+                    <div id="Animaresult">
+                        <!-- <div id="result" >
+                            <div id="fileName">资源名称：黑豹</div>
+                            <div id="fileDesc">资源简介：枪版黑豹1080p</div>
+                            <div id="fileMag">
+                                磁力链接：<input type="text" class="magnet" value="magnet:?xt=urn:btih:PUHBC6YBQU6D5O4JAQNUMWBZOYCBZCKY&dn=黑豹TC&tr=udp://tracker.publicbt.com:80/announce&xl=524288" id="copy-content" />
+                            </div>
+                        </div> -->
+                    </div>
+              </div>
+            </div>
+            <div class="layui-col-md4" >
+                <div name="movie" align="center" style="background-color:aliceblue; height:850px;">
+                    <br>
+                    <div class="layui-input-block" style="margin: 10px">
+                        <button class="layui-btn">
+                            <i class="layui-icon">&#xe669;</i>寻找电影
+                        </button>
+                    </div>
+                    <hr style="background-color: black;width: 90%;">
+                    <div id="Movieresult"></div>
+                </div>
+            </div>
+            <div class="layui-col-md4" >
+                <div name="play" align="center" style="background-color:aliceblue;height: 850px;">
+                    <br>
+                    <div class="layui-input-block" style="margin: 10px">
+                        <button class="layui-btn">
+                            <i class="layui-icon">&#xe669;</i>寻找电视剧
+                        </button>
+                    </div>
+                    <hr style="background-color: black;width: 90%;">
+                    <div id="Playresult"></div>
+                </div>
+            </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static',filename='lib/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ url_for('static',filename='lib/nebPay.js') }}"></script>
+<script src="{{ url_for('static',filename='lib/nebulas.js') }}"></script>
+<script>
+    var dappAddress = "n1hUvxLwRVuYY9EenUZGj9QVmyL3HgpysWu";
+    function findAnima(){
+        var nebulas = require("nebulas"),
+            Account = nebulas.Account,
+            neb = new nebulas.Neb();
+        neb.setRequest(new nebulas.HttpRequest("https://testnet.nebulas.io"));
+        
+            var from = Account.NewAccount().getAddressString();
+            var value = "0";
+            var nonce = "0"
+            var gas_price = "1000000"
+            var gas_limit = "2000000"
+            var callFunction = "AnimaQuery";
+            var callArgs = "[]"; //in the form of ["args"]
+            var contract = {
+                "function": callFunction,
+                "args": callArgs
+            }
+            neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then(function (resp) {
+                cbSearchAnima(resp)
+            }).catch(function (err) {
+                //cbSearch(err)
+                console.log("error:" + err.message)
+            })
+    }
+    function cbSearchAnima(resp) {
+        var result = resp.result    ////resp is an object, resp.result is a JSON string
+        console.log("return of rpc call: " + JSON.stringify(result));
+        if (result === "null" || result === null) {
+            alert("暂无动漫资源");
+        } else {
+            var mpp = JSON.stringify(result);
+            var tmpp = JSON.parse(mpp);
+            var end = JSON.parse(tmpp)
+            document.getElementById("Animaresult").innerHTML = "";
+            var obj = document.getElementById("Animaresult").innerHTML;
+            
+            for (var i = 0; i < end.length; i++) {
+
+                // <div id="result">
+                //     <div id="fileName">资源名称：黑豹</div>
+                //     <div id="fileDesc">资源简介：枪版黑豹1080p</div>
+                //     <div id="fileMag">
+                //         磁力链接：<input type="text" class="magnet" value="magnet:?xt=urn:btih:PUHBC6YBQU6D5O4JAQNUMWBZOYCBZCKY&dn=黑豹TC&tr=udp://tracker.publicbt.com:80/announce&xl=524288" id="copy-content" />
+                //     </div>
+                // </div>
+                obj += "<div id=\"result\">";
+                obj += "<div id=\"fileName\">" + "资源名称："  + end[i].name + "</div>";
+                obj += "<div id=\"fileDesc\">" + "资源简介：" + end[i].desc + "</div>";
+                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].desc + "\" id=\"copy-content\" /></div>";
+                obj += "</div>"
+            }
+            document.getElementById('Animaresult').innerHTML = obj;
+        }
+    }
+    function findMovie(){
+        var nebulas = require("nebulas"),
+            Account = nebulas.Account,
+            neb = new nebulas.Neb();
+        neb.setRequest(new nebulas.HttpRequest("https://testnet.nebulas.io"));
+        
+            var from = Account.NewAccount().getAddressString();
+            var value = "0";
+            var nonce = "0"
+            var gas_price = "1000000"
+            var gas_limit = "2000000"
+            var callFunction = "MovieQuery";
+            var callArgs = "[]"; //in the form of ["args"]
+            var contract = {
+                "function": callFunction,
+                "args": callArgs
+            }
+            neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then(function (resp) {
+                cbSearchMovie(resp)
+            }).catch(function (err) {
+                //cbSearch(err)
+                console.log("error:" + err.message)
+            })
+    }
+    function cbSearchMovie(resp) {
+        var result = resp.result    ////resp is an object, resp.result is a JSON string
+        console.log("return of rpc call: " + JSON.stringify(result));
+        if (result === "null" || result === null) {
+            alert("暂无电影资源");
+        } else {
+            var mpp = JSON.stringify(result);
+            var tmpp = JSON.parse(mpp);
+            var end = JSON.parse(tmpp)
+            document.getElementById("Movieresult").innerHTML = "";
+            var obj = document.getElementById("Movieresult").innerHTML;
+            
+            for (var i = 0; i < end.length; i++) {
+                obj += "<div id=\"result\">";
+                obj += "<div id=\"fileName\">" + "资源名称："  + end[i].name + "</div>";
+                obj += "<div id=\"fileDesc\">" + "资源简介：" + end[i].desc + "</div>";
+                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].desc + "\" id=\"copy-content\" /></div>";
+                obj += "</div>"
+            }
+            document.getElementById('Movieresult').innerHTML = obj;
+        }
+    }
+    function findPlay(){
+        var nebulas = require("nebulas"),
+            Account = nebulas.Account,
+            neb = new nebulas.Neb();
+        neb.setRequest(new nebulas.HttpRequest("https://testnet.nebulas.io"));
+        
+            var from = Account.NewAccount().getAddressString();
+            var value = "0";
+            var nonce = "0"
+            var gas_price = "1000000"
+            var gas_limit = "2000000"
+            var callFunction = "PlayQuery";
+            var callArgs = "[]"; //in the form of ["args"]
+            var contract = {
+                "function": callFunction,
+                "args": callArgs
+            }
+            neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then(function (resp) {
+                cbSearchPlay(resp)
+            }).catch(function (err) {
+                //cbSearch(err)
+                console.log("error:" + err.message)
+            })
+    }
+    function cbSearchPlay(resp) {
+        var result = resp.result    ////resp is an object, resp.result is a JSON string
+        console.log("return of rpc call: " + JSON.stringify(result));
+        if (result === "null" || result === null) {
+            alert("暂无电视剧资源");
+        } else {
+            var mpp = JSON.stringify(result);
+            var tmpp = JSON.parse(mpp);
+            var end = JSON.parse(tmpp)
+            document.getElementById("Playresult").innerHTML = "";
+            var obj = document.getElementById("Playresult").innerHTML;
+            
+            for (var i = 0; i < end.length; i++) {
+                obj += "<div id=\"result\">";
+                obj += "<div id=\"fileName\">" + "资源名称："  + end[i].name + "</div>";
+                obj += "<div id=\"fileDesc\">" + "资源简介：" + end[i].desc + "</div>";
+                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].desc + "\" id=\"copy-content\" /></div>";
+                obj += "</div>"
+            }
+            document.getElementById('Playresult').innerHTML = obj;
+        }
+    }
+</script>
+{% endblock %} 
+{% block layuijs %} 
+    
+{% endblock %}

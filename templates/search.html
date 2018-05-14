@@ -1,0 +1,145 @@
+{% extends "header.html" %} 
+{% block css %} 
+
+
+body{
+    background-color:aliceblue;
+}
+*{
+    margin:auto;
+    padding:0;
+}
+.search{
+    width: 100%;
+    height: 42px;
+    background:rgba(0,0,0,.2);
+    padding:15px;
+    border:none;
+    border-radius:5px;    
+    text-align: center;      
+}
+#ss{
+    width: 342px;
+    height: 42px;
+    background-color: #eeeeee;
+    border:none;
+    border-top-left-radius:5px;
+    border-bottom-left-radius:5px;
+    padding-left: 10px;
+    font: bold 15px 'lucida sans', 'trebuchet MS', 'Tahoma';
+}
+button{
+    /*display:inline-block;*/
+    width:112px;
+    height: 42px;
+    background-color:#d93c3c;
+    color:#fff;
+    border:none;
+    border-top-right-radius:5px;
+    border-bottom-right-radius:5px;
+    position: relative;
+    font-size:16px;
+    font-weight: bold;
+}
+/*使用伪类来添加三角符号*/
+button:before{
+    content:"";
+    border-width:6px;
+    border-style:solid;
+    border-color: transparent #d93c3c transparent transparent;
+    position: absolute;
+    right:100%;
+    top:38%;
+}
+#Nameresult{
+    width: 100%; 
+    text-align: left;
+}
+#result{
+    width:30%;
+    margin:10px;
+    padding:10px;
+    border:2px solid #009688;
+    background:aliceblue;
+    margin-left: auto;
+    margin-right: auto;
+}
+.magnet{
+    width:80%;
+}
+{% endblock %}
+
+{% block content%}
+<div class="search">   
+    <div style="display: inline-block;"><input type="text" name="uname" id="ss" placeholder=" 输入资源名"><button onclick="findName()">寻找</button></div>              
+</div>
+
+        <div name="search" id="Nameresult" align="center" style="background-color:aliceblue;height: 850px;">
+                
+        </div>
+
+
+<script src="{{ url_for('static',filename='lib/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ url_for('static',filename='lib/nebPay.js') }}"></script>
+<script src="{{ url_for('static',filename='lib/nebulas.js') }}"></script>
+<script>
+    var dappAddress = "n1hUvxLwRVuYY9EenUZGj9QVmyL3HgpysWu";
+    function findName(){
+        var nebulas = require("nebulas"),
+            Account = nebulas.Account,
+            neb = new nebulas.Neb();
+        neb.setRequest(new nebulas.HttpRequest("https://testnet.nebulas.io"));
+        
+            var from = Account.NewAccount().getAddressString();
+            var value = "0";
+            var nonce = "0"
+            var gas_price = "1000000"
+            var gas_limit = "2000000"
+            var callFunction = "NameQuery";
+            var callArgs ="[\"" + $("#ss").val() + "\"]";; //in the form of ["args"]
+            var contract = {
+                "function": callFunction,
+                "args": callArgs
+            }
+            neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then(function (resp) {
+                cbSearchName(resp)
+            }).catch(function (err) {
+                //cbSearch(err)
+                console.log("error:" + err.message)
+            })
+    }
+    function cbSearchName(resp) {
+        var result = resp.result    ////resp is an object, resp.result is a JSON string
+        console.log("return of rpc call: " + JSON.stringify(result));
+        if (result === "null" || result === null) {
+            alert("暂无您寻找的资源");
+        } else {
+            var mpp = JSON.stringify(result);
+            var tmpp = JSON.parse(mpp);
+            var end = JSON.parse(tmpp)
+            document.getElementById("Nameresult").innerHTML = "";
+            var obj = document.getElementById("Nameresult").innerHTML;
+            
+            for (var i = 0; i < end.length; i++) {
+
+                // <div id="result">
+                //     <div id="fileName">资源名称：黑豹</div>
+                //     <div id="fileDesc">资源简介：枪版黑豹1080p</div>
+                //     <div id="fileMag">
+                //         磁力链接：<input type="text" class="magnet" value="magnet:?xt=urn:btih:PUHBC6YBQU6D5O4JAQNUMWBZOYCBZCKY&dn=黑豹TC&tr=udp://tracker.publicbt.com:80/announce&xl=524288" id="copy-content" />
+                //     </div>
+                // </div>
+                obj += "<div id=\"result\">";
+                obj += "<div id=\"fileName\">" + "资源名称："  + end[i].name + "</div>";
+                obj += "<div id=\"fileDesc\">" + "资源简介：" + end[i].desc + "</div>";
+                obj += "<div id=\"fileMag\">" + "磁力链接：<input type=\"text\" class=\"magnet\" value=\"" + end[i].desc + "\" id=\"copy-content\" /></div>";
+                obj += "</div>"
+            }
+            document.getElementById('Animaresult').innerHTML = obj;
+        }
+    }
+</script>
+{% endblock %} 
+{% block layuijs %}
+
+{% endblock %}
